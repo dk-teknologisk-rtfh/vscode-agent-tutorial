@@ -7,16 +7,26 @@ interface BingoSquareProps {
 }
 
 export function BingoSquare({ square, isWinning, onClick }: BingoSquareProps) {
+  // Memphis playful rotation based on square ID
+  const rotations = ['rotate-1', '-rotate-1', 'rotate-2', '-rotate-2', 'rotate-0'];
+  const rotationClass = rotations[square.id % rotations.length];
+  
+  // Memphis border colors - vary by position
+  const borderColors = ['border-accent', 'border-marked', 'border-bingo', 'border-coral', 'border-purple'];
+  const borderColor = borderColors[square.id % borderColors.length];
+  
   const baseClasses =
-    'relative flex items-center justify-center p-1 text-center border border-gray-300 rounded transition-all duration-150 select-none min-h-[60px] text-xs leading-tight';
+    `relative flex items-center justify-center px-2 py-4 text-center border-4 rounded-lg transition-all duration-200 select-none min-h-[80px] text-xs leading-tight font-semibold ${rotationClass}`;
 
   const stateClasses = square.isMarked
     ? isWinning
-      ? 'bg-amber-200 border-amber-400 text-amber-900'
-      : 'bg-marked border-marked-border text-green-800'
-    : 'bg-white text-gray-700 active:bg-gray-100';
+      ? 'bg-bingo border-bingo text-gray-900 animate-pulse'
+      : `pattern-circles bg-marked/20 border-marked-border text-gray-900`
+    : `bg-white ${borderColor} text-gray-800 hover:bg-gray-50 active:scale-95`;
 
-  const freeSpaceClasses = square.isFreeSpace ? 'font-bold text-sm' : '';
+  const freeSpaceClasses = square.isFreeSpace 
+    ? 'font-display text-base bg-purple text-white border-bingo shadow-lg' 
+    : '';
 
   return (
     <button
@@ -26,9 +36,9 @@ export function BingoSquare({ square, isWinning, onClick }: BingoSquareProps) {
       aria-pressed={square.isMarked}
       aria-label={square.isFreeSpace ? 'Free space' : square.text}
     >
-      <span className="wrap-break-word hyphens-auto">{square.text}</span>
+      <span className="break-words hyphens-auto relative z-10 w-full">{square.text}</span>
       {square.isMarked && !square.isFreeSpace && (
-        <span className="absolute top-0.5 right-0.5 text-green-600 text-xs">✓</span>
+        <span className="absolute top-1 right-1 text-marked-border text-lg font-bold">✓</span>
       )}
     </button>
   );
